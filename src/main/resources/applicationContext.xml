@@ -1,0 +1,74 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans" 
+	   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" 
+	   xmlns:mvc="http://www.springframework.org/schema/mvc" 
+	   xmlns:context="http://www.springframework.org/schema/context" 
+	   xmlns:tx="http://www.springframework.org/schema/tx" 
+	   xmlns:aop="http://www.springframework.org/schema/aop" 
+	   xmlns:task="http://www.springframework.org/schema/task" 
+	   xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.2.xsd 
+		http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc-4.2.xsd 
+		http://www.springframework.org/schema/tx http://www.springframework.org/schema/tx/spring-tx-4.2.xsd 
+		http://www.springframework.org/schema/aop http://www.springframework.org/schema/aop/spring-aop-4.2.xsd 
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.2.xsd 
+		http://www.springframework.org/schema/task http://www.springframework.org/schema/task/spring-task-4.2.xsd"
+	  default-lazy-init="true">
+
+	<!-- 启用注解自动注入支持 -->
+	<context:annotation-config />
+	
+	<!-- 自动搜索@Component、@Service、@Repository、@Resource 等注解类 -->
+	<!-- 不搜索@Controller注解类 -->
+	<!-- 自动扫描组件，这里要把controller去除，如果不去除会影响事务管理 -->
+<!-- 	<context:component-scan base-package=" -->
+<!-- 		com.pes_soft.cmptDao.dao.deep, -->
+<!-- 		com.pes_soft.component.prvlg.dao, -->
+<!-- 		com.poweroak.psms.portal.conf,  -->
+<!-- 		com.poweroak.psms.portal.dao" annotation-config="true"> -->
+<!-- 		<context:exclude-filter type="annotation" expression="org.springframework.stereotype.Controller" /> -->
+<!-- 	</context:component-scan> -->
+	
+	<!-- 
+		 使用SpringMVC配置国际化，资源文件要放在classpath根目录下。因为本模板工程使用Maven进行管理的，所以资源文件放在resource包下就可以了。
+		 注意国际化资源文件的命名格式，例如本例language_zh_CN.properties、language_en_US.properties等，最后还要使用spring标签在页面输出。
+	 -->
+<!--     <bean id="messageSource" class="org.springframework.context.support.ReloadableResourceBundleMessageSource"> -->
+<!-- 		<property name="basenames"> -->
+<!-- 			<list> -->
+<!-- 				派思组件国际化 -->
+<!-- 				<value>classpath:ex</value> -->
+<!-- 				<value>classpath:util</value> -->
+<!-- 				<value>classpath:prvlg</value> -->
+<!-- 				<value>classpath:enum</value> -->
+				
+<!-- 				业务模块国际化 -->
+<!-- 				<value>classpath:i18n/lang</value> -->
+<!-- 				<value>classpath:i18n/protocol</value> -->
+<!-- 				<value>classpath:i18n/sys_menu</value> -->
+<!-- 			</list> -->
+<!-- 		</property> -->
+<!-- 		<property name="useCodeAsDefaultMessage" value="true" /> -->
+<!-- 		<!-- 刷新资源文件的周期，以秒为单位。值为-1表示永不刷新。生产环境中建议不小于30分钟每周期 --> -->
+<!-- 		<property name="cacheSeconds" value="-1"/>   -->
+<!--     </bean> -->
+    
+    <!-- 系统配置文件读取 -->
+<!--     <bean id="propertyConfigurer" class="com.pes_soft.cmptDao.PropertyConfigurer"> -->
+<!-- 		<property name="fileEncoding" value="UTF-8" /> -->
+<!--     	<property name="locations"> -->
+<!--     		<list> -->
+<!-- 				<value>/WEB-INF/frame.properties</value> -->
+<!-- 				<value>file:${PSMS_CONFIG_DIR}/database.properties</value> -->
+<!--     		</list> -->
+<!--     	</property> -->
+<!--     	<property name="webAppRoot"> -->
+<!--     		<value>poweroak.psms.root</value> -->
+<!--     	</property> -->
+<!--     </bean> -->
+    
+    <!-- netty socket server -->
+    <bean class="yangshi.test.netty.NioSocketServer"  lazy-init="false">
+    	<constructor-arg name="listenPort" value="0" />
+    </bean>
+</beans>
