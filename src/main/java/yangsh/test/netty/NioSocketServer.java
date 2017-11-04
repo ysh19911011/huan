@@ -18,6 +18,11 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
 import yangsh.test.netty.handler.ServerHandler;
@@ -81,13 +86,15 @@ private static final Logger logger = LoggerFactory.getLogger(NioSocketServer.cla
 							   @Override
 								protected void initChannel(SocketChannel socketChannel) throws Exception {
 									ChannelPipeline channelPipeline = socketChannel.pipeline();
-									channelPipeline.addLast(new StringDecoder());
-									channelPipeline.addLast(new StringEncoder());
+									channelPipeline.addLast("frameDecoder",new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4));
+									channelPipeline.addLast("frameEncoder", new LengthFieldPrepender(4));
+									channelPipeline.addLast("decoder",new ObjectDecoder(ClassResolvers.cacheDisabled(this.getClass().getClassLoader())));
+									channelPipeline.addLast("encoder",new ObjectEncoder());
 									channelPipeline.addLast("handler", new ServerHandler(){
 										@Override
-										protected void channelProcessor(ChannelHandlerContext ctx, String message) {
-											if(Util.checkNotNull(message)&&!message.isEmpty()){
-												ServerHandler.addId2Channel(message, ctx.channel().id().asLongText());
+										protected void channelProcessor(ChannelHandlerContext ctx, Object message) {
+											if(Util.checkNotNull(message)&&!message.toString().isEmpty()){
+												ServerHandler.addId2Channel(message.toString(), ctx.channel().id().asLongText());
 												System.out.println(ServerHandler.id2ChannelMap);
 											}
 										}

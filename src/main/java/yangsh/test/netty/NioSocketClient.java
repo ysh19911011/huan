@@ -5,18 +5,17 @@ import java.net.InetSocketAddress;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelId;
 import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.nio.NioEventLoopGroup;
 import io.netty.channel.socket.SocketChannel;
 import io.netty.channel.socket.nio.NioSocketChannel;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import yangsh.test.netty.coder.HexDecoder;
-import yangsh.test.netty.coder.HexEncoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldPrepender;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
 import yangsh.test.netty.handler.ClientHandler;
 
 /**
@@ -43,15 +42,17 @@ public class NioSocketClient {
 					@Override
 					protected void initChannel(SocketChannel socketChannel) throws Exception {
 						socketChannel.pipeline()
-												.addLast(new StringDecoder())
-												.addLast(new ClientHandler())
-												.addLast(new StringEncoder());
+												.addLast("frameDecoder",new LengthFieldBasedFrameDecoder(Integer.MAX_VALUE,0,4,0,4))
+												.addLast("frameEncoder", new LengthFieldPrepender(4))
+												.addLast("decoder",new ObjectDecoder(ClassResolvers.cacheDisabled(this.getClass().getClassLoader())))
+												.addLast("encoder",new ObjectEncoder())
+												.addLast("handler",new ClientHandler());
 					}
 				});
 		
 		// 发起异步连接操作
 		channelFuture = bootstrap.connect(socketAddress).sync();
-		send("19911011");
+		send("5943a56ab34a0b011ccf7bb9");
 //		System.out.println("conn..");
 	}
 	

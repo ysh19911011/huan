@@ -32,14 +32,14 @@ public class ProtocolHexInitalizer extends ChannelInitializer<SocketChannel> {
 		channelPipeline.addLast("handler", new ServerHandler()
 		{
 			@Override
-			protected void channelProcessor(ChannelHandlerContext ctx, String message) {
+			protected void channelProcessor(ChannelHandlerContext ctx, Object message) {
 				//String response = nioChannelResponse.handleAndResponse(message); // 上层业务处理
 				//ctx.channel().writeAndFlush(response);
 //				nioChannelResponse.handle(message);
 				System.out.println(message);
-				if(Util.checkNotNull(message)&&!message.isEmpty()){
+				if(Util.checkNotNull(message)&&!message.toString().isEmpty()){
 //					ctx.writeAndFlush("connected");
-					ServerHandler.addId2Channel(message, ctx.channel().id().asLongText());
+					ServerHandler.addId2Channel(message.toString(), ctx.channel().id().asLongText());
 //					System.out.println("id2channel 放入。。。。。"+ctx.channel().id().asLongText()+"----------"+message);
 				}
 			}

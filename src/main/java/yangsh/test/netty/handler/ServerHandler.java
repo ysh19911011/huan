@@ -42,7 +42,7 @@ public abstract class ServerHandler extends SimpleChannelInboundHandler<String> 
 	 * @param ctx
 	 * @param message 消息内容
 	 */
-	protected abstract void channelProcessor(ChannelHandlerContext ctx, String message);
+	protected abstract void channelProcessor(ChannelHandlerContext ctx, Object message);
 	
 	/**
 	 * 收到新的客户端连接
@@ -84,7 +84,11 @@ public abstract class ServerHandler extends SimpleChannelInboundHandler<String> 
 //		System.out.println("服务端读取消息完毕");
 		ctx.fireChannelReadComplete();
 	}
-
+	@Override
+	public void channelRead(ChannelHandlerContext ctx,Object message){
+		channelProcessor(ctx,message.toString());
+		System.out.println(message);
+	}
 	/**
 	 * 读取客户端消息
 	 */
@@ -131,5 +135,12 @@ public abstract class ServerHandler extends SimpleChannelInboundHandler<String> 
 		String channelId=ServerHandler.id2Channel(userId);
 		ChannelHandlerContext ctx=ServerHandler.getServerChannel(channelId);
 		return ctx.writeAndFlush(message);
+	}
+	@Override
+	public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+		// TODO Auto-generated method stub
+		super.exceptionCaught(ctx, cause);
+		cause.printStackTrace();
+		ctx.close();
 	}
 }

@@ -1,8 +1,6 @@
 package yangsh.test.netty;
 
 import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelHandlerContext;
-import yangsh.test.netty.handler.ServerHandler;
 
 public class NioSocketResponseImpl implements NioSocketServerResponse {
 
